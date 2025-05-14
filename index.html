@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ma Bibliothèque</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <h1>📚 Ma Bibliothèque</h1>
+
+    <section class="add-form">
+      <input type="text" id="title" placeholder="Titre">
+      <input type="number" id="pages" placeholder="Nombre de pages">
+      <input type="text" id="cover" placeholder="URL de la couverture">
+      <input type="month" id="readDate" placeholder="Date de lecture">
+      <select id="type">
+        <option value="livre">📖 Livre</option>
+        <option value="manga">📘 Manga</option>
+      </select>
+      <button id="addBtn">Ajouter</button>
+    </section>
+
+    <section class="sort-options">
+      <label for="sortSelect">Filtrer par année :</label>
+      <select id="sortSelect">
+        <option value="all">Toutes</option>
+      </select>
+
+      <label for="themeSelect">Thème :</label>
+      <select id="themeSelect">
+        <!-- <option value="light">Clair</option>
+        <option value="dark">Sombre</option>
+        <option value="cocoon">Cocooning</option> -->
+        <option value="nature">Nature</option>
+        <option value="romance">Romance</option>
+        <option value="darkromance">Dark romance</option>
+        <option value="solaire">Solaire</option>
+        <option value="magie">Magie</option>
+        <option value="fantastique">Fantastique</option>
+      </select>
+    </section>
+
+    <section class="library">
+      <h2>📖 Lectures en cours</h2>
+      <div id="readingList" class="grid"></div>
+    </section>
+
+    <section class="finished">
+      <h2>✅ Terminés</h2>
+      <div id="finishedList" class="grid"></div>
+    </section>
+
+    <section class="stats">
+      <p><strong>📘 Mangas lus :</strong> <span id="mangaCount">0</span></p>
+      <p><strong>📖 Livres lus :</strong> <span id="bookCount">0</span></p>
+      <p><strong>Total pages lues :</strong> <span id="pageCount">0</span></p>
+    </section>
+  </main>
+
+  <script>
+    const addBtn = document.getElementById('addBtn');
+    const readingList = document.getElementById('readingList');
+    const finishedList = document.getElementById('finishedList');
+    const mangaCount = document.getElementById('mangaCount');
+    const bookCount = document.getElementById('bookCount');
+    const pageCount = document.getElementById('pageCount');
+    const sortSelect = document.getElementById('sortSelect');
+    const themeSelect = document.getElementById('themeSelect');
+
+    let library = JSON.parse(localStorage.getItem('library') || '[]');
+
+    function saveLibrary() {
+      localStorage.setItem('library', JSON.stringify(library));
+    }
+
+    function getUniqueYears() {
+      const years = new Set();
+      library.forEach(item => {
+        if (item.readDate) {
+          years.add(new Date(item.readDate).getFullYear());
+        }
+      });
+      return Array.from(years).sort();
+    }
+
+    function populateYearFilter() {
+      const years = getUniqueYears();
+      sortSelect.innerHTML = '<option value="all">Toutes</option>';
+      years.forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        sortSelect.appendChild(opt);
+      });
+    }
+
+    function render() {
+      readingList.innerHTML = '';
+      finishedList.innerHTML = '';
+      let mangas = 0, books = 0, pages = 0;
+
+      const selectedYear = sortSelect.value;
+
+      library.forEach((item, index) => {
+        const year = item.readDate ? new Date(item.readDate).getFullYear().toString() : 'inconnu';
+        if (selectedYear !== 'all' && year !== selectedYear) return;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.setAttribute('data-type', item.type); // Ajout pour activer les icônes CSS
+        card.innerHTML = `
+          <img src="${item.cover}" alt="cover">
+          <h3>${item.title}</h3>
+          <p>${item.type === 'manga' ? '📘 Manga' : '📖 Livre'}</p>
+          <p>${item.read}/${item.pages} pages</p>
+          <p>Date de lecture : ${item.readDate || 'Non renseignée'}</p>
+          <progress value="${item.read}" max="${item.pages}"></progress>
+          ${item.read < item.pages ? `
+            <input type="number" min="0" max="${item.pages}" value="${item.read}" data-index="${index}" class="progressInput">
+          ` : '<p>✅ Terminé</p>'}
+          <button data-edit="${index}" class="editBtn">✏️ Modifier</button>
+          <button data-delete="${index}" class="deleteBtn">🗑️ Supprimer</button>
+        `;
+
+        if (item.read >= item.pages) {
+          finishedList.appendChild(card);
+          item.type === 'manga' ? mangas++ : books++;
+          pages += item.pages;
+        } else {
+          readingList.appendChild(card);
+        }
+      });
+
+      mangaCount.textContent = mangas;
+      bookCount.textContent = books;
+      pageCount.textContent = pages;
+
+      document.querySelectorAll('.progressInput').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const idx = e.target.dataset.index;
+          library[idx].read = Math.min(parseInt(e.target.value), library[idx].pages);
+          saveLibrary();
+          render();
+        });
+      });
+
+      document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = e.target.dataset.delete;
+          library.splice(idx, 1);
+          saveLibrary();
+          populateYearFilter();
+          render();
+        });
+      });
+
+      document.querySelectorAll('.editBtn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = e.target.dataset.edit;
+          const item = library[idx];
+          document.getElementById('title').value = item.title;
+          document.getElementById('pages').value = item.pages;
+          document.getElementById('cover').value = item.cover;
+          document.getElementById('type').value = item.type;
+          document.getElementById('readDate').value = item.readDate || '';
+          library.splice(idx, 1);
+          saveLibrary();
+          populateYearFilter();
+          render();
+        });
+      });
+    }
+
+    addBtn.addEventListener('click', () => {
+      const title = document.getElementById('title').value;
+      const pages = parseInt(document.getElementById('pages').value);
+      const cover = document.getElementById('cover').value;
+      const type = document.getElementById('type').value;
+      const readDate = document.getElementById('readDate').value;
+
+      if (!title || !pages || !cover) return alert('Tous les champs sont requis');
+
+      library.push({ title, pages, read: 0, cover, type, readDate });
+      saveLibrary();
+      populateYearFilter();
+      render();
+
+      document.getElementById('title').value = '';
+      document.getElementById('pages').value = '';
+      document.getElementById('cover').value = '';
+      document.getElementById('readDate').value = '';
+    });
+
+    sortSelect.addEventListener('change', render);
+
+    themeSelect.addEventListener('change', () => {
+      document.body.className = themeSelect.value;
+      localStorage.setItem('theme', themeSelect.value);
+    });
+
+    // Apply saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.className = savedTheme;
+    themeSelect.value = savedTheme;
+
+    populateYearFilter();
+    render();
+  </script>
+</body>
+</html>

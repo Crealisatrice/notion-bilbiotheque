@@ -1,0 +1,358 @@
+/* Style général */
+body {
+  font-family: 'Quicksand', sans-serif;
+  margin: 0;
+  padding: 2rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+main {
+  max-width: 1000px;
+  margin: auto;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+input, select, button {
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+input:focus, select:focus, button:focus {
+  outline: none;
+  border-color: #e4b982;
+  box-shadow: 0 0 0 3px rgba(192, 136, 136, 0.2);
+}
+
+/* Formulaire d'ajout */
+.add-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.add-form button {
+  background-color: #c08888;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.add-form button:hover {
+  background-color: #a86e6e;
+}
+
+.sort-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Grilles de livres */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: center;
+  transition: transform 0.2s, background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+  background-repeat: repeat;
+  background-size: auto;
+  /* background-image: var(--card-pattern, url('https://www.transparenttextures.com/patterns/paper-fibers.png')); */
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* .card[data-progress='low'] {
+  background: #fff0f0;
+}
+
+.card[data-progress='medium'] {
+  background: #fffaf0;
+}
+
+.card[data-progress='high'] {
+  background: #f0fff0;
+} */
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.card progress {
+  width: 100%;
+  height: 10px;
+  margin: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.card input[type="number"] {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+.card button {
+  margin: 0.3rem;
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.card button:hover {
+  background-color: #ddd;
+}
+
+.stats {
+  background: #fff7f3;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Icônes par type de lecture */
+.card[data-type="livre"]::before {
+  content: '📖';
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+
+.card[data-type="manga"]::before {
+  content: '📘';
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+/* Thèmes de base */
+/*
+body.light {
+  background: #fdfdfd;
+  color: #333;
+}
+
+body.light .card {
+  background: #ffffff;
+  color: #333;
+}
+
+body.dark {
+  background: #1c1c1c;
+  color: #f0f0f0;
+}
+
+body.dark .card {
+  background: #2c2c2c;
+  color: #fff;
+}
+
+body.dark .stats {
+  background: #2a2a2a;
+}
+
+body.cocoon {
+  background: linear-gradient(to right, #fef6f0, #fae3d9);
+  color: #5c4b51;
+}
+
+body.cocoon .card {
+  background: #fffaf7;
+  box-shadow: 0 0 8px rgba(220, 180, 160, 0.2);
+  color: #5c4b51;
+}
+
+body.cocoon .stats {
+  background: #fbeee8;
+}*/
+
+
+/* Nouveaux thèmes */
+body.nature {
+  background: linear-gradient(to right, #e0f7e9, #c1e1c5);
+  color: #2f4f4f;
+}
+body.nature .card {
+  background: #f0fff0;
+}
+body.nature .stats,
+body.nature .card button {
+    background: #b2ecb2;
+}
+body.nature .add-form button{
+  background-color: #69e079;
+}
+
+body.nature .add-form button:hover {
+  background-color: #498a53;
+}
+
+body.romance {
+  background: linear-gradient(to right, #ffe5ec, #ffc2d1);
+  color: #6b2f33;
+}
+body.romance .card {
+  background: #fff0f5;
+}
+body.romance .stats,
+body.romance .card button {
+    background: #f0abc1;
+}
+body.romance .add-form button{
+  background-color: #d84c6f;
+}
+body.romance .add-form button:hover {
+  background-color: #c92e54;
+}
+
+body.darkromance {
+  background: linear-gradient(to right, #420808, #3a2f3b, #59187b);
+  color: #f0e1ec;
+}
+body.darkromance .card {
+  background: #402c3c;
+  color: #f9e6f2;
+}
+body.darkromance .stats,
+body.darkromance .card button {
+    background: #381d32;
+}
+body.darkromance .add-form button{
+  background-color: #7a4b97;
+}
+body.darkromance .add-form button:hover {
+  background-color: #5c3276;
+}
+
+body.solaire {
+  background: linear-gradient(to right, #f7c82e, #e9a227, #ff7707);
+  color: #f8dbb0;
+}
+body.solaire .card {
+  background: #f2640cc9;
+  color: #fafae4;
+}
+body.solaire .stats,
+body.solaire .card button {
+    background: #ff9e01;
+}
+body.solaire .add-form button{
+  background-color: #df7002;
+}
+body.solaire .add-form button:hover {
+  background-color: #ca6500;
+}
+
+body.magie {
+  background: linear-gradient(to right, #d1c4e9, #ede7f6);
+  color: #4a148c;
+}
+body.magie .card {
+  background: #f3e5f5;
+  color: #4a148c;
+}
+body.magie .stats,
+body.magie .card button {
+    background: #ccaff2;
+}
+body.magie .add-form button{
+  background-color: #795f9b;
+}
+body.magie .add-form button:hover {
+  background-color: #6b4f91;
+}
+
+body.fantastique {
+  background: linear-gradient(to right, #cfd8dc, #b0bec5, #44698f);
+  color: #07338a;
+}
+body.fantastique .card {
+  background: #b9d4e5;
+  color: #07338a;
+}
+body.fantastique .stats,
+body.fantastique .card button {
+    background: #a0c4e1;
+}
+body.fantastique .add-form button{
+  background-color: #2b89a8;
+}
+body.fantastique .add-form button:hover {
+  background-color: #237793;
+}
+
+body select, body input, body button {
+  background: inherit;
+  color: inherit;
+  border-color: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .add-form {
+    grid-template-columns: 1fr;
+  }
+
+  .sort-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
